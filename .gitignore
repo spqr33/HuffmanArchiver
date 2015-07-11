@@ -1,0 +1,12 @@
+*.[oa]
+*~
+nbproject/
+bld/
+dst/
+build/
+dist/
+src/unused
+makedata/unused
+.dep.inc
+Makefile
+
