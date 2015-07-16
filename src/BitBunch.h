@@ -11,8 +11,11 @@
 #include <cstdint>
 #include <stdexcept>
 #include <iostream>
+#include <memory>
 
 namespace LobKo {
+    class BitBunch;
+    typedef std::shared_ptr<BitBunch> spBitBunch;
 
     class BitBunch {
         friend void BitBunch_dump(const BitBunch& bit_bunch);
@@ -25,6 +28,7 @@ namespace LobKo {
          * @param bitsQuantity
          */
         explicit BitBunch(uint32_t bitsQuantity = 32);
+        BitBunch(const BitBunch& orig);
 
         ~BitBunch();
         /**
@@ -36,6 +40,11 @@ namespace LobKo {
         inline uint32_t max_bit_can_hold() const;
         inline uint32_t capacity() const; // in bits
         inline uint32_t get_size_in_bytes() const;
+        //const BitBunch& operator+=(const BitBunch& rhs);
+
+        enum add_behavior {
+            NONE, ADD_ZERO, ADD_ONE
+        };
     protected:
 
         enum fill_behavior {
@@ -63,7 +72,6 @@ namespace LobKo {
     private:
         void buffer_zeroing(uint8_t* buffer, uint32_t buffer_size);
 
-        BitBunch(const BitBunch& orig);
         BitBunch(BitBunch&& orig);
         const BitBunch& operator=(const BitBunch& rhs);
         const BitBunch& operator=(BitBunch&& rhs);

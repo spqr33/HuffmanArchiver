@@ -15,7 +15,7 @@ using namespace LobKo;
  * 
  */
 int main(int argc, char** argv) {
-    BitBunch b(10);
+    BitBunch b;
     b.append_one_bit();
     b.append_one_bit();
     b.append_zero_bit();
@@ -66,6 +66,10 @@ int main(int argc, char** argv) {
 
 
     LobKo::BitBunch_dump(b);
+    BitBunch c(b);
+    std::cout << "c:\n";
+    LobKo::BitBunch_dump(c);
+    
     return 0;
 }
 

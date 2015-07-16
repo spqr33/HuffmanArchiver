@@ -64,6 +64,7 @@ namespace LobKo {
     }
 
     void BitBunch::buff_copy(uint8_t* dest, uint32_t dest_size) const {
+        std::cout << "Buffer copied, size: " << this->size_ << "capacity: " << capacity() << "\n";
         int n = (allocated_bytes_ <= dest_size) ? allocated_bytes_ : dest_size;
 
         for ( uint32_t i = 0; i < n; ++i ) {
@@ -72,21 +73,46 @@ namespace LobKo {
     }
 
     void BitBunch_dump(const BitBunch& bit_bunch) {
-        uint32_t size_in_bytes = bit_bunch.allocated_bytes_;
-
-        for ( uint32_t i = 0; i < size_in_bytes; ++i ) {
-            //bitset b = std::bitset(bit_bunch[i]);
-            std::cout << std::bitset<8>(bit_bunch.buffer_[i]) << std::endl;
-
-
-        }
-        std::cout << "___________" << std::endl;
-
         for ( uint32_t i = 0; i < bit_bunch.get_size_in_bytes(); ++i ) {
             //bitset b = std::bitset(bit_bunch[i]);
             std::cout << std::bitset<8>(bit_bunch.buffer_[i]) << std::endl;
         }
-        std::cout << " Size: " << bit_bunch.size_;
+        std::cout << "Size: " << bit_bunch.size_ << std::endl;
     }
+
+    //    const BitBunch& BitBunch::operator+=(const BitBunch& rhs) {
+    //        //return *this;
+    //    }
+
+    BitBunch::BitBunch(const BitBunch& orig) {
+        //usage_count_ = 1;
+        allocated_bytes_ = orig.allocated_bytes_;
+        size_ = orig.size_;
+        buffer_ = buff_allocate(allocated_bytes_, DONT_FILL_ZERO);
+        orig.buff_copy(buffer_, allocated_bytes_);
+        uint32_t n = orig.current_byte_ - orig.buffer_;
+        current_byte_ = buffer_ + n;
+        current_bit_ = orig.current_bit_;
+
+    };
+
+    const BitBunch& BitBunch::operator=(const BitBunch& rhs) {
+        if ( this == &rhs ) {
+            return *this;
+        }
+        uint8_t* new_buffer = buff_allocate(rhs.allocated_bytes_, DONT_FILL_ZERO);
+        rhs.buff_copy(new_buffer, rhs.allocated_bytes_);
+        allocated_bytes_ = rhs.allocated_bytes_;
+        size_ = rhs.size_;
+        uint32_t n = rhs.current_byte_ - rhs.buffer_;
+        current_byte_ = new_buffer + n;
+        current_bit_ = rhs.current_bit_;
+        buff_free_memory();
+        buffer_ = new_buffer;
+    }
+
+
 }
+
+
 
