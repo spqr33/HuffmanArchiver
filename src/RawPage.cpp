@@ -33,4 +33,11 @@ namespace LobKo {
     RawPage::~RawPage() {
         delete [] buffer_;
     }
+
+    bool comparision_page_number(spRawPage a, spRawPage b) {
+        if ( a->page_number() > b->page_number() ) {
+            return true;
+        }
+        return false;
+    }
 }

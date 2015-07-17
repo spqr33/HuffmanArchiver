@@ -9,10 +9,12 @@
 #define	RAWPAGE_H
 
 #include <cstdint>
+#include <memory>
 
 namespace LobKo {
-
-    class HammanData;
+    class RawPage;
+    typedef std::shared_ptr<RawPage> spRawPage;
+    bool comparision_page_number(spRawPage a, spRawPage b);
 
     class RawPage {
     public:
@@ -22,8 +24,9 @@ namespace LobKo {
         virtual ~RawPage();
 
         static const uint32_t MAX_RAW_PAGE_SIZE;
-        inline uint8_t * buffer() ;
+        inline uint8_t * buffer();
         inline uint32_t size() const;
+        inline uint32_t page_number() const;
     private:
         uint8_t * buffer_;
         uint32_t size_;
@@ -33,12 +36,16 @@ namespace LobKo {
         const RawPage& operator=(const RawPage& rhs);
     };
 
-    uint8_t * RawPage::buffer()  {
+    uint8_t * RawPage::buffer() {
         return buffer_;
     }
 
     uint32_t RawPage::size() const {
         return size_;
+    }
+
+    uint32_t RawPage::page_number() const {
+        return page_number_;
     }
 };
 #endif	/* RAWPAGE_H */
