@@ -18,6 +18,7 @@ namespace LobKo {
     public:
         //MAX_RAW_PAGE_SIZE = 1024 * 1024;
         RawPage(uint32_t size, uint32_t page_number);
+        RawPage(uint8_t * buffer, uint32_t size, uint32_t page_number);
         virtual ~RawPage();
 
         static const uint32_t MAX_RAW_PAGE_SIZE;

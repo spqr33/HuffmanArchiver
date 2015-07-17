@@ -21,6 +21,15 @@ namespace LobKo {
         buffer_ = new uint8_t[size];
     }
 
+    RawPage::RawPage(uint8_t * buffer, uint32_t size, uint32_t page_number) :
+    size_(size),
+    page_number_(page_number) {
+        if ( size > MAX_RAW_PAGE_SIZE ) {
+            throw std::out_of_range("More than the page limit requested");
+        }
+        buffer_ = buffer;
+    }
+
     RawPage::RawPage(const RawPage& orig) {
     }
 
