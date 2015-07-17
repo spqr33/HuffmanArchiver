@@ -30,13 +30,7 @@ namespace LobKo {
         buffer_ = buffer;
     }
 
-    RawPage::RawPage(const RawPage& orig) {
-    }
-
     RawPage::~RawPage() {
         delete [] buffer_;
     }
-
-
-
 }
