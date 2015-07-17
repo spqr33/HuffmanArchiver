@@ -12,11 +12,11 @@
 
 namespace LobKo {
     class HammanTreeNode;
-    typedef std::shared_ptr<HammanTreeNode> spHammanTreeNode;
+    //typedef std::shared_ptr<HammanTreeNode> spHammanTreeNode;
 
     struct HammanTreeNodeCopmarision {
 
-        bool operator()(spHammanTreeNode a, spHammanTreeNode b);
+        bool operator()(std::shared_ptr<HammanTreeNode> a, std::shared_ptr<HammanTreeNode> b);
 //        {
 //            if (a->frequency() > b->frequency()) {
 //                return true;

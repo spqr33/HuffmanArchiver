@@ -11,12 +11,11 @@
 #include <memory>
 #include "BitBunch.h"
 #include "HammanData.h"
-//#include "HammanTreeNodeCopmarision.h"
+#include <string>
 
 namespace LobKo {
     class HammanTreeNode;
     class HammanData;
-    //class HammanTreeNodeCopmarision;
     typedef std::shared_ptr<HammanTreeNode> spHammanTreeNode;
     
 
@@ -31,7 +30,9 @@ namespace LobKo {
         inline uint32_t frequency() const;
         inline void set_left_son(spHammanTreeNode left);
         inline void set_right_son(spHammanTreeNode left);
-
+#ifndef NDEBUG        
+        std::string characters;
+#endif
     private:
         uint32_t frequency_;
         spHammanTreeNode left_;

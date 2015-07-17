@@ -66,7 +66,7 @@ namespace LobKo {
         uint8_t* current_byte_;
         uint8_t current_bit_;
         uint32_t allocated_bytes_;
-        static const uint16_t MAX_BYTES_COUNT;
+        static const uint32_t MAX_BYTES_COUNT;
         static const uint8_t BITS_PER_BYTE = 8;
         static const int BUFFER_GROW_FACTOR = 2;
     private:

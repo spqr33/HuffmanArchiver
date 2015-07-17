@@ -10,7 +10,6 @@
 
 #include "RawPage.h"
 #include "HammanTreeNode.h"
-#include "HammanTreeNodeCopmarision.h"
 #include "BitBunch.h"
 #include <array>
 #include <queue>
@@ -20,25 +19,25 @@
 namespace LobKo {
     class RawPage;
     class HammanTreeNode;
-    //struct HammanTreeNodeCopmarision;
     typedef std::shared_ptr<HammanTreeNode> spHammanTreeNode;
+
+    bool hamman_tree_node_copmarision(spHammanTreeNode a, spHammanTreeNode b);
 
     class HammanData {
     public:
-        explicit HammanData(const RawPage& inputPage);
+        explicit HammanData(RawPage& inputPage);
         virtual ~HammanData();
-        void build_character_frequency_array(const uint8_t * buffer, const uint32_t size);
+        void build_character_frequency_array(uint8_t * buffer, const uint32_t size);
     private:
         std::array<uint32_t, 256> character_frequency_;
         std::array<spHammanTreeNode, 256> character_to_node_map_;
 
-        //typedef std::priority_queue<spHammanTreeNode, std::vector<spHammanTreeNode>> pri_queue_;
-        typedef std::priority_queue<spHammanTreeNode, std::vector<spHammanTreeNode>, HammanTreeNodeCopmarision> pri_queue_;
+        typedef std::priority_queue<spHammanTreeNode, std::vector<spHammanTreeNode>, std::function<bool(spHammanTreeNode, spHammanTreeNode) >> pri_queue_;
         pri_queue_ priority_q_;
 
         spHammanTreeNode hamman_tree_root_;
 
-        //void calc_bit_bunch(spHammanTreeNode node, const spBitBunch bits_sequence, BitBunch::add_behavior behavior);
+        void calc_bit_bunch(spHammanTreeNode node, const spBitBunch bits_sequence, BitBunch::add_behavior behavior);
         HammanData(const HammanData& orig);
         const HammanData& operator=(const HammanData& rhs);
 

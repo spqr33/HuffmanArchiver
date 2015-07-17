@@ -8,7 +8,7 @@
 #include "HammanTreeNodeCopmarision.h"
 namespace LobKo {
 
-    bool HammanTreeNodeCopmarision::operator()(spHammanTreeNode a, spHammanTreeNode b) {
+    bool HammanTreeNodeCopmarision::operator()(std::shared_ptr<HammanTreeNode> a, std::shared_ptr<HammanTreeNode> b) {
         if ( a->frequency() > b->frequency() ) {
             return true;
         }

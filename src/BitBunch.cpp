@@ -11,7 +11,8 @@
 #include <stdexcept>
 #include <bitset>
 
-const uint16_t LobKo::BitBunch::MAX_BYTES_COUNT = std::numeric_limits<uint16_t>::max();
+const uint32_t LobKo::BitBunch::MAX_BYTES_COUNT = 1024*1024;
+//const uint16_t LobKo::BitBunch::MAX_BYTES_COUNT = std::numeric_limits<uint16_t>::max();
 
 namespace LobKo {
 
@@ -77,7 +78,7 @@ namespace LobKo {
             //bitset b = std::bitset(bit_bunch[i]);
             std::cout << std::bitset<8>(bit_bunch.buffer_[i]) << std::endl;
         }
-        std::cout << "Size: " << bit_bunch.size_ << std::endl;
+        std::cout << "Size: " << bit_bunch.size_ << std::endl << "__________\n";
     }
 
     //    const BitBunch& BitBunch::operator+=(const BitBunch& rhs) {

@@ -21,7 +21,7 @@ namespace LobKo {
         virtual ~RawPage();
 
         static const uint32_t MAX_RAW_PAGE_SIZE;
-        inline const uint8_t * buffer() const;
+        inline uint8_t * buffer() ;
         inline uint32_t size() const;
     private:
         uint8_t * buffer_;
@@ -32,7 +32,7 @@ namespace LobKo {
         const RawPage& operator=(const RawPage& rhs);
     };
 
-    const uint8_t * RawPage::buffer() const {
+    uint8_t * RawPage::buffer()  {
         return buffer_;
     }
 

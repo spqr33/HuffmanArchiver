@@ -10,10 +10,15 @@ namespace LobKo {
 
     HammanTreeNode::HammanTreeNode(uint32_t frequency) :
     frequency_(frequency) {
-        ;
+#ifndef NDEBUG
+        characters = "AUX";
+#endif
     }
 
     HammanTreeNode::~HammanTreeNode() {
+#ifndef NDEBUG
+        std::cout << "~()" << characters << "\n";
+#endif
     }
 
     spHammanTreeNode HammanTreeNode::get_node(uint32_t frequency) {
