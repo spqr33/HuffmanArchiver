@@ -35,7 +35,7 @@ namespace LobKo {
         inline const spBitBunch& get_bit_bunch() const;
         inline void set_bytes_compressed(uint32_t bytes_compressed);
     private:
-        uint32_t page_number_;
+        const uint32_t page_number_;
         spHammanData sp_hamman_data_;
         spBitBunch sp_bit_bunch_;
         uint32_t bytes_compressed_;
@@ -49,7 +49,7 @@ namespace LobKo {
     }
 
     void CompressedData::set_hamman_data(spHammanData new_hamman_data) {
-        sp_hamman_data_ = sp_hamman_data_;
+        sp_hamman_data_ = new_hamman_data;
     }
 
     void CompressedData::set_bytes_compressed(uint32_t bytes_compressed) {

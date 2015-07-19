@@ -65,7 +65,9 @@ namespace LobKo {
     }
 
     void BitBunch::buff_copy(uint8_t* dest, uint32_t dest_size) const {
+#ifndef NDEBUG
         std::cout << "Buffer copied, size: " << this->size_ << "capacity: " << capacity() << "\n";
+#endif
         int n = (allocated_bytes_ <= dest_size) ? allocated_bytes_ : dest_size;
 
         for ( uint32_t i = 0; i < n; ++i ) {

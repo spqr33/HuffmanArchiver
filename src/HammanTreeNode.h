@@ -22,7 +22,7 @@ namespace LobKo {
     class HammanTreeNode {
         friend class HammanData;
     public:
-        HammanTreeNode(uint32_t frequency);
+        explicit HammanTreeNode(uint32_t frequency);
         virtual ~HammanTreeNode();
 
         static spHammanTreeNode get_node(uint32_t frequency);

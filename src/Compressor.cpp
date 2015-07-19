@@ -35,7 +35,7 @@ namespace LobKo {
                 mutex_reading_queue.unlock();
                 mutex_reading_done.unlock();
 
-                std::this_thread::yield();
+                //std::this_thread::yield();
                 continue;
             } else {
                 spRawPage sp_raw_page = raw_pages_queue.front();

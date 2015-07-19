@@ -13,16 +13,16 @@
 namespace LobKo {
 
     HammanData::HammanData(RawPage& inputPage) :
-    priority_q_(hamman_tree_node_copmarision) {
-        character_frequency_ = {0};
+    priority_q_(hamman_tree_node_copmarision), character_frequency_({0}) {
+        //character_frequency_ = {0};
         build_character_frequency_array(inputPage.buffer(), inputPage.size());
 
         //char c = 0;
-//        for ( auto &x : character_frequency_ ) {
-//
-//            //std::cout << "Char: " << c << " freq: " << x << "\n";
-//            //++c;
-//        }
+        //        for ( auto &x : character_frequency_ ) {
+        //
+        //            //std::cout << "Char: " << c << " freq: " << x << "\n";
+        //            //++c;
+        //        }
         //c = 0;
         for ( uint32_t character = 0; character < 256; ++character ) {
             if ( character_frequency_[character] != 0 ) {
@@ -34,8 +34,9 @@ namespace LobKo {
                 //++c;
             }
         }
+#ifndef NDEBUG
         std::cout << "Priority_q_ size: " << priority_q_.size() << /*" c = " << (int) c << */"\n";
-
+#endif
         while (priority_q_.size() > 1) {
             spHammanTreeNode p1 = priority_q_.top();
             priority_q_.pop();
@@ -49,7 +50,9 @@ namespace LobKo {
 #endif
             priority_q_.push(node);
         }
+#ifndef NDEBUG        
         std::cout << "Priority_q_ size: " << priority_q_.size() << "\n";
+#endif
         if ( priority_q_.size() == 1 ) {
             hamman_tree_root_ = priority_q_.top();
             priority_q_.pop();
@@ -71,7 +74,7 @@ namespace LobKo {
 
     void HammanData::calc_bit_bunch(spHammanTreeNode node, const spBitBunch bits_sequence, BitBunch::add_behavior behavior) {
 #ifndef NDEBUG
-        std::cout << "Char_: " << node->characters << "  ";
+        std::cout << "Char: " << node->characters << "  ";
 #endif
         BitBunch* p = new BitBunch(*(bits_sequence.get()));
         node->bits_sequence = spBitBunch(p);
@@ -103,9 +106,9 @@ namespace LobKo {
     }
 
     spBitBunch HammanData::generate_bit_bunch(RawPage& inputPage) const {
-//#ifndef NDEBUG
-//        std::cout << "Generate Bunch started" << std::endl;
-//#endif
+        //#ifndef NDEBUG
+        //        std::cout << "Generate Bunch started" << std::endl;
+        //#endif
 
 
         spBitBunch sp_bit_bunch(new BitBunch);

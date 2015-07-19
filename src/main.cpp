@@ -83,23 +83,50 @@ int main(int argc, char** argv) {
         thread w4(Compressor(), std::ref(raw_pages_queue), std::ref(mutex_reading_queue), std::ref(reading_done), std::ref(mutex_reading_done),
                 std::ref(ready_for_write_data_priority_queue), std::ref(mutex_ready_for_write_data_priority_queue));
         w4.detach();
+        /**/
+        thread w5(Compressor(), std::ref(raw_pages_queue), std::ref(mutex_reading_queue), std::ref(reading_done), std::ref(mutex_reading_done),
+                std::ref(ready_for_write_data_priority_queue), std::ref(mutex_ready_for_write_data_priority_queue));
+        w5.detach();
+        thread w6(Compressor(), std::ref(raw_pages_queue), std::ref(mutex_reading_queue), std::ref(reading_done), std::ref(mutex_reading_done),
+                std::ref(ready_for_write_data_priority_queue), std::ref(mutex_ready_for_write_data_priority_queue));
+        w6.detach();
+        thread w7(Compressor(), std::ref(raw_pages_queue), std::ref(mutex_reading_queue), std::ref(reading_done), std::ref(mutex_reading_done),
+                std::ref(ready_for_write_data_priority_queue), std::ref(mutex_ready_for_write_data_priority_queue));
+        w7.detach();
+        thread w8(Compressor(), std::ref(raw_pages_queue), std::ref(mutex_reading_queue), std::ref(reading_done), std::ref(mutex_reading_done),
+                std::ref(ready_for_write_data_priority_queue), std::ref(mutex_ready_for_write_data_priority_queue));
+        w8.detach();
+        /**/
+
 
         //thread writer(Writer(std::ref(ready_for_write_data_priority_queue), std::ref(mutex_ready_for_write_data_priority_queue)));
         //writer.detach();
+        thread writer(Writer(), std::ref(ready_for_write_data_priority_queue), std::ref(mutex_ready_for_write_data_priority_queue));
+        writer.detach();
 
         do {
-            uint8_t* buffer = new uint8_t[RawPage::MAX_RAW_PAGE_SIZE];
-
-            in.read((char*) buffer, RawPage::MAX_RAW_PAGE_SIZE);
-            ++reading_counter;
-
-            actual_read_bytes = in.gcount();
-            spRawPage sp_raw_page(new RawPage(buffer, actual_read_bytes, reading_counter));
+            bool can_read = true;
 
             mutex_reading_queue.lock();
-            raw_pages_queue.push(sp_raw_page);
+            if ( raw_pages_queue.size() > 40 ) {
+                can_read = false;
+            }
             mutex_reading_queue.unlock();
 
+            if ( can_read == true ) {
+                uint8_t* buffer = new uint8_t[RawPage::MAX_RAW_PAGE_SIZE];
+                in.read((char*) buffer, RawPage::MAX_RAW_PAGE_SIZE);
+                ++reading_counter;
+
+                actual_read_bytes = in.gcount();
+                spRawPage sp_raw_page(new RawPage(buffer, actual_read_bytes, reading_counter));
+
+                mutex_reading_queue.lock();
+                std::cout << "READING COUNTER == " << reading_counter <<
+                        " READING QUEUE SIZE == " << raw_pages_queue.size() << std::endl;
+                raw_pages_queue.push(sp_raw_page);
+                mutex_reading_queue.unlock();
+            }
             //out.write((char*) sp_raw_page->buffer(), sp_raw_page->size());
 
 

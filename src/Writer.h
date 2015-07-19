@@ -19,13 +19,14 @@ namespace LobKo {
     
     class Writer {
     public:
-        Writer(CompressedDataPriorityQueue& ready_for_write_data_priority_queue, std::mutex& mutex_ready_for_write_data_priority_queue);
+        Writer();
+        //Writer(CompressedDataPriorityQueue& ready_for_write_data_priority_queue, std::mutex& mutex_ready_for_write_data_priority_queue);
         virtual ~Writer();
-        void operator()() const;
+        void operator()(CompressedDataPriorityQueue& ready_for_write_data_priority_queue, std::mutex& mutex_ready_for_write_data_priority_queue) const;
     private:
 //        Writer(const Writer& orig);
-        CompressedDataPriorityQueue& ready_for_write_data_priority_queue_;
-        std::mutex& mutex_ready_for_write_data_priority_queue_;
+        //CompressedDataPriorityQueue& ready_for_write_data_priority_queue_;
+        //std::mutex& mutex_ready_for_write_data_priority_queue_;
 
     };
 }
