@@ -40,7 +40,7 @@ namespace LobKo {
         inline uint32_t max_bit_can_hold() const;
         inline uint32_t capacity() const; // in bits
         inline uint32_t get_size_in_bytes() const;
-        //const BitBunch& operator+=(const BitBunch& rhs);
+        const BitBunch& operator+=(const BitBunch& rhs);
 
         enum add_behavior {
             NONE, ADD_ZERO, ADD_ONE
@@ -56,6 +56,11 @@ namespace LobKo {
         uint8_t* buff_allocate(const uint32_t size_in_bytes, fill_behavior fill = FILL_ZERO);
         void buff_free_memory();
         void buff_copy(uint8_t* dest, uint32_t dest_size) const;
+
+        enum bit_state {
+            ZERO, ONE
+        };
+        bit_state operator[](uint32_t position) const;
         //inline void set_bit();
 
         uint32_t usage_count_;

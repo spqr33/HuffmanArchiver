@@ -15,7 +15,7 @@ namespace LobKo {
     CompressedData::~CompressedData() {
     }
 
-    bool copmressed_data_copmarision(spCompressedData a, spCompressedData b) {
+    bool compressed_data_copmarision(spCompressedData a, spCompressedData b) {
         if ( a->page_number() > b->page_number() ) {
             return true;
         }

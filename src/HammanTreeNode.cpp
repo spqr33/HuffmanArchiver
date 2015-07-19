@@ -17,7 +17,7 @@ namespace LobKo {
 
     HammanTreeNode::~HammanTreeNode() {
 #ifndef NDEBUG
-        std::cout << "~()" << characters << "\n";
+        //std::cout << "~()" << characters << "\n";
 #endif
     }
 

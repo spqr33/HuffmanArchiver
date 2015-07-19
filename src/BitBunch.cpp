@@ -11,7 +11,7 @@
 #include <stdexcept>
 #include <bitset>
 
-const uint32_t LobKo::BitBunch::MAX_BYTES_COUNT = 1024*1024;
+const uint32_t LobKo::BitBunch::MAX_BYTES_COUNT = 1024 * 1024;
 //const uint16_t LobKo::BitBunch::MAX_BYTES_COUNT = std::numeric_limits<uint16_t>::max();
 
 namespace LobKo {
@@ -112,6 +112,55 @@ namespace LobKo {
         buffer_ = new_buffer;
     }
 
+    const BitBunch& BitBunch::operator+=(const BitBunch& rhs) {
+//#ifndef NDEBUG
+//        std::cout << "BitBunch::operator+=()" << std::endl;
+//#endif
+
+        if ( (size_ + rhs.size_) > capacity() ) {
+            if ( (size_ + rhs.size_) > max_bit_can_hold() ) {
+                throw std::out_of_range("More than the limit bits requested");
+            }
+            uint8_t* new_buffer;
+
+            // TODO change  FILL_ZERO to DONT_FILL_ZERO and check behavior
+            uint32_t need_bytes = (size_ + rhs.size_) / BITS_PER_BYTE;
+            if ( (size_ + rhs.size_) % BITS_PER_BYTE != 0 ) {
+                ++need_bytes;
+            };
+
+            if ( need_bytes < (allocated_bytes_ * BUFFER_GROW_FACTOR) ) {
+                need_bytes = allocated_bytes_ * BUFFER_GROW_FACTOR;
+            }
+            new_buffer = buff_allocate(need_bytes, FILL_ZERO);
+            buff_copy(new_buffer, need_bytes);
+            buff_free_memory();
+            buffer_ = new_buffer;
+
+            current_byte_ = new_buffer + allocated_bytes_;
+
+            allocated_bytes_ = need_bytes;
+        };
+        for ( uint32_t i = 0; i < rhs.size_; ++i ) {
+            if ( rhs[i] == ONE ) {
+                append_one_bit();
+            } else {
+                append_zero_bit();
+            }
+        }
+    }
+
+    BitBunch::bit_state BitBunch::operator[](uint32_t position) const {
+        uint8_t target_byte = *(buffer_ + position / BITS_PER_BYTE);
+        uint32_t target_bit = position % BITS_PER_BYTE;
+
+        if ( (((uint8_t) 1) << (BITS_PER_BYTE - 1 - target_bit)) & (target_byte) ) {
+            return ONE;
+        } else {
+            return ZERO;
+        }
+
+    }
 
 }
 

@@ -20,6 +20,8 @@ namespace LobKo {
     class RawPage;
     class HammanTreeNode;
     typedef std::shared_ptr<HammanTreeNode> spHammanTreeNode;
+    class BitBunch;
+    typedef std::shared_ptr<BitBunch> spBitBunch;
 
     bool hamman_tree_node_copmarision(spHammanTreeNode a, spHammanTreeNode b);
 
@@ -28,6 +30,7 @@ namespace LobKo {
         explicit HammanData(RawPage& inputPage);
         virtual ~HammanData();
         void build_character_frequency_array(uint8_t * buffer, const uint32_t size);
+        spBitBunch generate_bit_bunch(RawPage& inputPage) const;
     private:
         std::array<uint32_t, 256> character_frequency_;
         std::array<spHammanTreeNode, 256> character_to_node_map_;

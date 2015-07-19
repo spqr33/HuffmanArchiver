@@ -18,11 +18,11 @@ namespace LobKo {
         build_character_frequency_array(inputPage.buffer(), inputPage.size());
 
         //char c = 0;
-        for ( auto &x : character_frequency_ ) {
-
-            //std::cout << "Char: " << c << " freq: " << x << "\n";
-            //++c;
-        }
+//        for ( auto &x : character_frequency_ ) {
+//
+//            //std::cout << "Char: " << c << " freq: " << x << "\n";
+//            //++c;
+//        }
         //c = 0;
         for ( uint32_t character = 0; character < 256; ++character ) {
             if ( character_frequency_[character] != 0 ) {
@@ -100,5 +100,24 @@ namespace LobKo {
             return true;
         }
         return false;
+    }
+
+    spBitBunch HammanData::generate_bit_bunch(RawPage& inputPage) const {
+//#ifndef NDEBUG
+//        std::cout << "Generate Bunch started" << std::endl;
+//#endif
+
+
+        spBitBunch sp_bit_bunch(new BitBunch);
+        BitBunch& bit_bunch = *(sp_bit_bunch.get());
+
+        uint8_t* buffer = inputPage.buffer();
+        uint8_t* buffer_end = buffer + inputPage.size();
+
+        for (; buffer != buffer_end; ++buffer ) {
+            BitBunch& bits_correspond_to_sybmol = *(character_to_node_map_[*buffer]->bits_sequence.get());
+            bit_bunch += bits_correspond_to_sybmol;
+        }
+        return sp_bit_bunch;
     }
 }
