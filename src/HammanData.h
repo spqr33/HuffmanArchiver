@@ -28,6 +28,7 @@ namespace LobKo {
     class HammanData {
     public:
         explicit HammanData(RawPage& inputPage);
+        explicit HammanData(const std::array<uint32_t, 256>& character_frequency);
         virtual ~HammanData();
         void build_character_frequency_array(uint8_t * buffer, const uint32_t size);
         spBitBunch generate_bit_bunch(RawPage& inputPage) const;

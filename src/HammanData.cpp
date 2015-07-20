@@ -61,6 +61,48 @@ namespace LobKo {
         hamman_tree_root_.reset();
     }
 
+    HammanData::HammanData(const std::array<uint32_t, 256>& character_frequency) :
+    priority_q_(hamman_tree_node_copmarision) {
+        character_frequency_ = character_frequency;
+
+        for ( uint32_t character = 0; character < 256; ++character ) {
+            if ( character_frequency_[character] != 0 ) {
+                character_to_node_map_[character] = HammanTreeNode::get_node(character_frequency_[character]);
+#ifndef NDEBUG
+                character_to_node_map_[character]->characters = character;
+#endif
+                priority_q_.push(character_to_node_map_[character]);
+            }
+        }
+#ifndef NDEBUG
+        std::cout << "Priority_q_ size: " << priority_q_.size() << "\n";
+#endif
+        while (priority_q_.size() > 1) {
+            spHammanTreeNode p1 = priority_q_.top();
+            priority_q_.pop();
+            spHammanTreeNode p2 = priority_q_.top();
+            priority_q_.pop();
+            spHammanTreeNode node = HammanTreeNode::get_node(p1->frequency() + p2->frequency(), p1, p2);
+#ifndef NDEBUG
+            std::cout << "First popped char: " << p1->characters << "\n";
+            std::cout << "Second popped char: " << p2->characters << "\n";
+            node->characters = "(" + p1->characters + " " + p2->characters + ")";
+#endif
+            priority_q_.push(node);
+        }
+#ifndef NDEBUG        
+        std::cout << "Priority_q_ size: " << priority_q_.size() << "\n";
+#endif
+        if ( priority_q_.size() == 1 ) {
+            hamman_tree_root_ = priority_q_.top();
+            priority_q_.pop();
+            calc_bit_bunch(hamman_tree_root_, spBitBunch(new BitBunch()), BitBunch::NONE);
+        }
+        hamman_tree_root_.reset();
+
+
+    }
+
     HammanData::~HammanData() {
     }
 

@@ -99,6 +99,7 @@ int main(int argc, char** argv) {
             std::cout << "Summ: " << summ << std::endl;
             std::cout << "FileSize: " << reader.get_file_size() << std::endl;
         }
+        spHammanData hamman_data(result_character_frequency);
 
 
 
@@ -110,9 +111,9 @@ int main(int argc, char** argv) {
 
 
 
-        //        typedef std::priority_queue<spCompressedData, std::vector<spCompressedData>, std::function<bool(spCompressedData, spCompressedData) >> CompressedDataPriorityQueue;
-        //        CompressedDataPriorityQueue ready_for_write_data_priority_queue(compressed_data_copmarision);
-        //        mutex mutex_ready_for_write_data_priority_queue;
+                typedef std::priority_queue<spCompressedData, std::vector<spCompressedData>, std::function<bool(spCompressedData, spCompressedData) >> CompressedDataPriorityQueue;
+                CompressedDataPriorityQueue ready_for_write_data_priority_queue(compressed_data_copmarision);
+                mutex mutex_ready_for_write_data_priority_queue;
         //
         //        //mutex_reading_queue.lock();
         //
