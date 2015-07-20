@@ -24,6 +24,7 @@ namespace LobKo {
         virtual ~Reader();
 
         void reset_reading_counter();
+        inline void reset_seek();
         void operator()(std::queue<spRawPage>& raw_pages_queue, std::mutex& mutex_reading_queue, bool& reading_done, std::mutex& mutex_reading_done) const;
         inline uint64_t get_file_size() const;
     private:
@@ -34,6 +35,10 @@ namespace LobKo {
 
     uint64_t Reader::get_file_size() const {
         return file_size_;
+    }
+
+    void Reader::reset_seek() {
+        file_in_.seekg(0, file_in_.beg);
     }
 }
 #endif	/* READER_H */
