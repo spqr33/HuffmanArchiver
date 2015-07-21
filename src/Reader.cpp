@@ -22,7 +22,7 @@ namespace LobKo {
     Reader::~Reader() {
     }
 
-    void Reader::operator()(std::queue<spRawPage>& raw_pages_queue, std::mutex& mutex_reading_queue, bool& reading_done, std::mutex& mutex_reading_done) const {
+    void Reader::operator()(std::queue<spRawPage>& raw_pages_queue, std::mutex& mutex_reading_queue, bool& reading_done, std::mutex& mutex_reading_done, uint64_t& last_page_num) const {
         uint32_t actual_read_bytes;
         bool can_read = true;
 
@@ -30,7 +30,7 @@ namespace LobKo {
             can_read = true;
 
             mutex_reading_queue.lock();
-            if ( raw_pages_queue.size() > 40 ) {
+            if ( raw_pages_queue.size() >= 40 ) {
                 can_read = false;
             }
             mutex_reading_queue.unlock();
@@ -65,6 +65,7 @@ namespace LobKo {
             std::cout << "End of file reached successfully\n";
 #endif
             std::lock_guard<std::mutex> lock(mutex_reading_done);
+            last_page_num = reading_counter_;
             reading_done = true;
         }
     }

@@ -11,7 +11,7 @@
 #include <stdexcept>
 #include <bitset>
 
-const uint32_t LobKo::BitBunch::MAX_BYTES_COUNT = 1024 * 1024;
+const uint32_t LobKo::BitBunch::MAX_BYTES_COUNT = 1024 * 1024 * 8;
 //const uint16_t LobKo::BitBunch::MAX_BYTES_COUNT = std::numeric_limits<uint16_t>::max();
 
 namespace LobKo {
@@ -21,7 +21,7 @@ namespace LobKo {
     current_bit_(BITS_PER_BYTE - 1),
     size_(0) {
         if ( bitsQuantity > max_bit_can_hold() ) {
-            throw std::out_of_range("More than the limit bits requested");
+            throw std::out_of_range("BitBunch(), More than the limit bits requested");
         }
 
         // TODO if bitsQuantity == 0 ????
@@ -41,7 +41,7 @@ namespace LobKo {
 
     uint8_t* BitBunch::buff_allocate(const uint32_t size_in_bytes, fill_behavior fill) {
         if ( size_in_bytes > MAX_BYTES_COUNT ) {
-            throw std::out_of_range("More than the limit bits requested");
+            throw std::out_of_range("buff_allocate(), More than the limit bits requested");
         }
 
         uint8_t* new_buffer = new uint8_t[size_in_bytes];
@@ -115,13 +115,14 @@ namespace LobKo {
     }
 
     const BitBunch& BitBunch::operator+=(const BitBunch& rhs) {
-//#ifndef NDEBUG
-//        std::cout << "BitBunch::operator+=()" << std::endl;
-//#endif
+        //#ifndef NDEBUG
+        //        std::cout << "BitBunch::operator+=()" << std::endl;
+        //#endif
 
         if ( (size_ + rhs.size_) > capacity() ) {
             if ( (size_ + rhs.size_) > max_bit_can_hold() ) {
-                throw std::out_of_range("More than the limit bits requested");
+                assert(size_ + rhs.size_ < max_bit_can_hold() && size_ && " " && rhs.size_);
+                throw std::out_of_range("operator+=(),More than the limit bits requested");
             }
             uint8_t* new_buffer;
 

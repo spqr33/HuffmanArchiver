@@ -66,8 +66,9 @@ int main(int argc, char** argv) {
         }
 
         uint32_t real_cores = thread::hardware_concurrency();
-        uint32_t reading_counter = 0;
-        uint32_t actual_read_bytes;
+        //uint32_t reading_counter = 0;
+        //uint32_t actual_read_bytes;
+        uint64_t last_page_num = 0;
 
         queue<spRawPage> raw_pages_queue;
         mutex mutex_reading_queue;
@@ -77,9 +78,10 @@ int main(int argc, char** argv) {
 
         array<uint32_t, 256> result_character_frequency({0});
         Reader reader(in);
+        //uint64_t last_page_num = reader.reading_counter();
         {
             mutex mutex_result_character_frequency;
-            thread r(reader, std::ref(raw_pages_queue), std::ref(mutex_reading_queue), std::ref(reading_done), std::ref(mutex_reading_done));
+            thread r(reader, std::ref(raw_pages_queue), std::ref(mutex_reading_queue), std::ref(reading_done), std::ref(mutex_reading_done), std::ref(last_page_num));
             thread fc1(FrequencyCounter(result_character_frequency, mutex_result_character_frequency), std::ref(raw_pages_queue), std::ref(mutex_reading_queue), std::ref(reading_done), std::ref(mutex_reading_done));
             thread fc2(FrequencyCounter(result_character_frequency, mutex_result_character_frequency), std::ref(raw_pages_queue), std::ref(mutex_reading_queue), std::ref(reading_done), std::ref(mutex_reading_done));
             thread fc3(FrequencyCounter(result_character_frequency, mutex_result_character_frequency), std::ref(raw_pages_queue), std::ref(mutex_reading_queue), std::ref(reading_done), std::ref(mutex_reading_done));
@@ -99,39 +101,50 @@ int main(int argc, char** argv) {
             std::cout << "Summ: " << summ << std::endl;
             std::cout << "FileSize: " << reader.get_file_size() << std::endl;
         }
-        spHammanData hamman_data(result_character_frequency);
 
+        spHammanData sp_hamman_data(new HammanData(result_character_frequency));
 
+        /////////////////////////////////////////////////////////////Compressing
+        typedef std::priority_queue<spCompressedData, std::vector<spCompressedData>, std::function<bool(spCompressedData, spCompressedData) >> CompressedDataPriorityQueue;
+        CompressedDataPriorityQueue ready_for_write_data_priority_queue(compressed_data_copmarision);
+        mutex mutex_ready_for_write_data_priority_queue;
 
+        bool writing_done = false;
+        mutex mutex_writing_done;
 
+        {
 
+            reader.reset_reading_counter();
+            reader.reset_seek();
+            reading_done = false;
+            in.clear(); // in.failbit was set on last reading.
 
+            Reader reader2(in);
+            thread r(reader2, std::ref(raw_pages_queue), std::ref(mutex_reading_queue), std::ref(reading_done), std::ref(mutex_reading_done), std::ref(last_page_num));
 
+            std::function<void(queue<spRawPage>&, mutex&, bool&, mutex&, CompressedDataPriorityQueue&, mutex&, bool&, mutex&) > worker = Compressor(sp_hamman_data);
+            thread w1(worker, std::ref(raw_pages_queue), std::ref(mutex_reading_queue), std::ref(reading_done), std::ref(mutex_reading_done),
+                    std::ref(ready_for_write_data_priority_queue), std::ref(mutex_ready_for_write_data_priority_queue), std::ref(writing_done), std::ref(mutex_writing_done));
 
+            thread w2(Compressor(sp_hamman_data), std::ref(raw_pages_queue), std::ref(mutex_reading_queue), std::ref(reading_done), std::ref(mutex_reading_done),
+                    std::ref(ready_for_write_data_priority_queue), std::ref(mutex_ready_for_write_data_priority_queue), std::ref(writing_done), std::ref(mutex_writing_done));
+            thread w3(Compressor(sp_hamman_data), std::ref(raw_pages_queue), std::ref(mutex_reading_queue), std::ref(reading_done), std::ref(mutex_reading_done),
+                    std::ref(ready_for_write_data_priority_queue), std::ref(mutex_ready_for_write_data_priority_queue), std::ref(writing_done), std::ref(mutex_writing_done));
+            thread w4(Compressor(sp_hamman_data), std::ref(raw_pages_queue), std::ref(mutex_reading_queue), std::ref(reading_done), std::ref(mutex_reading_done),
+                    std::ref(ready_for_write_data_priority_queue), std::ref(mutex_ready_for_write_data_priority_queue), std::ref(writing_done), std::ref(mutex_writing_done));
 
+            thread writer(Writer(last_page_num), std::ref(ready_for_write_data_priority_queue), std::ref(mutex_ready_for_write_data_priority_queue),
+                    std::ref(writing_done), std::ref(mutex_writing_done));
 
+            r.join();
+            w1.join();
+            w2.join();
+            w3.join();
+            w4.join();
+            writer.join();
+        }
 
-                typedef std::priority_queue<spCompressedData, std::vector<spCompressedData>, std::function<bool(spCompressedData, spCompressedData) >> CompressedDataPriorityQueue;
-                CompressedDataPriorityQueue ready_for_write_data_priority_queue(compressed_data_copmarision);
-                mutex mutex_ready_for_write_data_priority_queue;
-        //
-        //        //mutex_reading_queue.lock();
-        //
-        //        std::function<void(queue<spRawPage>&, mutex&, bool&, mutex&, CompressedDataPriorityQueue&, mutex&) > worker = Compressor();
-        //        thread w1(worker, std::ref(raw_pages_queue), std::ref(mutex_reading_queue), std::ref(reading_done), std::ref(mutex_reading_done),
-        //                std::ref(ready_for_write_data_priority_queue), std::ref(mutex_ready_for_write_data_priority_queue));
-        //        w1.detach();
-        //
-        //        thread w2(Compressor(), std::ref(raw_pages_queue), std::ref(mutex_reading_queue), std::ref(reading_done), std::ref(mutex_reading_done),
-        //                std::ref(ready_for_write_data_priority_queue), std::ref(mutex_ready_for_write_data_priority_queue));
-        //        w2.detach();
-        //        thread w3(Compressor(), std::ref(raw_pages_queue), std::ref(mutex_reading_queue), std::ref(reading_done), std::ref(mutex_reading_done),
-        //                std::ref(ready_for_write_data_priority_queue), std::ref(mutex_ready_for_write_data_priority_queue));
-        //        w3.detach();
-        //        thread w4(Compressor(), std::ref(raw_pages_queue), std::ref(mutex_reading_queue), std::ref(reading_done), std::ref(mutex_reading_done),
-        //                std::ref(ready_for_write_data_priority_queue), std::ref(mutex_ready_for_write_data_priority_queue));
-        //        w4.detach();
-        //        /**/
+        /**/
         //        thread w5(Compressor(), std::ref(raw_pages_queue), std::ref(mutex_reading_queue), std::ref(reading_done), std::ref(mutex_reading_done),
         //                std::ref(ready_for_write_data_priority_queue), std::ref(mutex_ready_for_write_data_priority_queue));
         //        w5.detach();
@@ -144,15 +157,14 @@ int main(int argc, char** argv) {
         //        thread w8(Compressor(), std::ref(raw_pages_queue), std::ref(mutex_reading_queue), std::ref(reading_done), std::ref(mutex_reading_done),
         //                std::ref(ready_for_write_data_priority_queue), std::ref(mutex_ready_for_write_data_priority_queue));
         //        w8.detach();
-        //
-        //        /**/
-        //
-        //
-        //        //thread writer(Writer(std::ref(ready_for_write_data_priority_queue), std::ref(mutex_ready_for_write_data_priority_queue)));
-        //        //writer.detach();
-        //        thread writer(Writer(), std::ref(ready_for_write_data_priority_queue), std::ref(mutex_ready_for_write_data_priority_queue));
-        //        writer.detach();
-        //
+        /**/
+
+
+        //thread writer(Writer(std::ref(ready_for_write_data_priority_queue), std::ref(mutex_ready_for_write_data_priority_queue)));
+        //writer.detach();
+        //thread writer(Writer(), std::ref(ready_for_write_data_priority_queue), std::ref(mutex_ready_for_write_data_priority_queue));
+        // writer.detach();
+
         //        do {
         //            bool can_read = true;
         //

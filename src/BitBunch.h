@@ -10,6 +10,7 @@
 
 #include <cstdint>
 #include <stdexcept>
+#include <cassert>
 #include <iostream>
 #include <memory>
 
@@ -93,7 +94,7 @@ uint32_t LobKo::BitBunch::max_bit_can_hold() const {
 void LobKo::BitBunch::append_zero_bit() {
     if (size_ == capacity()) {
         if (size_ == max_bit_can_hold()) {
-            throw std::out_of_range("More than the limit bits requested");
+            throw std::out_of_range("append_zero_bit(), More than the limit bits requested");
         }
         uint8_t* new_buffer;
 
@@ -123,7 +124,7 @@ void LobKo::BitBunch::append_zero_bit() {
 void LobKo::BitBunch::append_one_bit() {
     if (size_ == capacity()) {
         if (size_ == max_bit_can_hold()) {
-            throw std::out_of_range("More than the limit bits requested");
+            throw std::out_of_range("append_one_bit(), More than the limit bits requested");
         }
         uint8_t* new_buffer;
 

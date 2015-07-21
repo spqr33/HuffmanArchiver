@@ -9,6 +9,7 @@
 #define	COMPRESSOR_H
 
 #include "CompressedData.h"
+#include "HammanData.h"
 #include "RawPage.h"
 #include <queue>
 #include <mutex>
@@ -25,13 +26,19 @@ namespace LobKo {
 
     class Compressor {
     public:
-        Compressor();
+        //Compressor();
+        explicit Compressor(spHammanData& sp_hamman_data);
         virtual ~Compressor();
-        void operator()(std::queue<spRawPage>& raw_pages_queue, std::mutex& mutex_reading_queue, bool& reading_done, std::mutex& mutex_reading_done,
-        CompressedDataPriorityQueue&, std::mutex&) const;
+        void operator()(std::queue<spRawPage>& raw_pages_queue,
+            std::mutex& mutex_reading_queue,
+            bool& reading_done, std::mutex& mutex_reading_done,
+            CompressedDataPriorityQueue& ready_for_write_data_priority_queue,
+            std::mutex& mutex_ready_for_write_data_priority_queue,
+            bool& writing_done, std::mutex& mutex_writing_done) const;
         //void operator()() const;
     private:
         //Compressor(const Compressor& orig);
+        spHammanData& sp_hamman_data_;
         const Compressor& operator=(const Compressor& rhs);
     };
 }
