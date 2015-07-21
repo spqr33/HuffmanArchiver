@@ -41,6 +41,7 @@ namespace LobKo {
         inline uint32_t max_bit_can_hold() const;
         inline uint32_t capacity() const; // in bits
         inline uint32_t get_size_in_bytes() const;
+        inline const uint8_t* buffer() const;
         const BitBunch& operator+=(const BitBunch& rhs);
 
         enum add_behavior {
@@ -166,6 +167,10 @@ uint32_t LobKo::BitBunch::get_size_in_bytes() const {
         return current_byte_ - buffer_ + 1;
     }
 
+}
+
+const uint8_t* LobKo::BitBunch::buffer() const {
+    return buffer_;
 }
 #endif	/* BITBUNCH_H */
 

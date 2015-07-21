@@ -27,13 +27,14 @@ namespace LobKo {
     public:
         explicit CompressedData(uint32_t page_number);
         virtual ~CompressedData();
-        
+
         inline uint32_t page_number() const;
         inline void set_hamman_data(spHammanData new_hamman_data);
         inline void set_bit_bunch(spBitBunch new_bit_bunch);
         inline const spHammanData& get_hamman_data() const;
         inline const spBitBunch& get_bit_bunch() const;
         inline void set_bytes_compressed(uint32_t bytes_compressed);
+        inline uint32_t get_bytes_compressed() const;
     private:
         const uint32_t page_number_;
         spHammanData sp_hamman_data_;
@@ -66,6 +67,10 @@ namespace LobKo {
 
     void CompressedData::set_bit_bunch(spBitBunch new_bit_bunch) {
         sp_bit_bunch_ = new_bit_bunch;
+    }
+
+    uint32_t CompressedData::get_bytes_compressed() const {
+        return bytes_compressed_;
     }
 }
 #endif	/* COMPRESSEDDATA_H */

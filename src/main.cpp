@@ -78,7 +78,6 @@ int main(int argc, char** argv) {
 
         array<uint32_t, 256> result_character_frequency({0});
         Reader reader(in);
-        //uint64_t last_page_num = reader.reading_counter();
         {
             mutex mutex_result_character_frequency;
             thread r(reader, std::ref(raw_pages_queue), std::ref(mutex_reading_queue), std::ref(reading_done), std::ref(mutex_reading_done), std::ref(last_page_num));
@@ -113,14 +112,16 @@ int main(int argc, char** argv) {
         mutex mutex_writing_done;
 
         {
-
+            //std::cout << "reader.reading_counter_ " << reader.reading_counter_ << std::endl;
+            //std::cin.get();
+            
             reader.reset_reading_counter();
             reader.reset_seek();
             reading_done = false;
             in.clear(); // in.failbit was set on last reading.
 
             Reader reader2(in);
-            thread r(reader2, std::ref(raw_pages_queue), std::ref(mutex_reading_queue), std::ref(reading_done), std::ref(mutex_reading_done), std::ref(last_page_num));
+            thread r(reader, std::ref(raw_pages_queue), std::ref(mutex_reading_queue), std::ref(reading_done), std::ref(mutex_reading_done), std::ref(last_page_num));
 
             std::function<void(queue<spRawPage>&, mutex&, bool&, mutex&, CompressedDataPriorityQueue&, mutex&, bool&, mutex&) > worker = Compressor(sp_hamman_data);
             thread w1(worker, std::ref(raw_pages_queue), std::ref(mutex_reading_queue), std::ref(reading_done), std::ref(mutex_reading_done),
@@ -132,8 +133,17 @@ int main(int argc, char** argv) {
                     std::ref(ready_for_write_data_priority_queue), std::ref(mutex_ready_for_write_data_priority_queue), std::ref(writing_done), std::ref(mutex_writing_done));
             thread w4(Compressor(sp_hamman_data), std::ref(raw_pages_queue), std::ref(mutex_reading_queue), std::ref(reading_done), std::ref(mutex_reading_done),
                     std::ref(ready_for_write_data_priority_queue), std::ref(mutex_ready_for_write_data_priority_queue), std::ref(writing_done), std::ref(mutex_writing_done));
+            thread w5(Compressor(sp_hamman_data), std::ref(raw_pages_queue), std::ref(mutex_reading_queue), std::ref(reading_done), std::ref(mutex_reading_done),
+                    std::ref(ready_for_write_data_priority_queue), std::ref(mutex_ready_for_write_data_priority_queue), std::ref(writing_done), std::ref(mutex_writing_done));
+            thread w6(Compressor(sp_hamman_data), std::ref(raw_pages_queue), std::ref(mutex_reading_queue), std::ref(reading_done), std::ref(mutex_reading_done),
+                    std::ref(ready_for_write_data_priority_queue), std::ref(mutex_ready_for_write_data_priority_queue), std::ref(writing_done), std::ref(mutex_writing_done));
+            thread w7(Compressor(sp_hamman_data), std::ref(raw_pages_queue), std::ref(mutex_reading_queue), std::ref(reading_done), std::ref(mutex_reading_done),
+                    std::ref(ready_for_write_data_priority_queue), std::ref(mutex_ready_for_write_data_priority_queue), std::ref(writing_done), std::ref(mutex_writing_done));
+            thread w8(Compressor(sp_hamman_data), std::ref(raw_pages_queue), std::ref(mutex_reading_queue), std::ref(reading_done), std::ref(mutex_reading_done),
+                    std::ref(ready_for_write_data_priority_queue), std::ref(mutex_ready_for_write_data_priority_queue), std::ref(writing_done), std::ref(mutex_writing_done));
 
-            thread writer(Writer(last_page_num), std::ref(ready_for_write_data_priority_queue), std::ref(mutex_ready_for_write_data_priority_queue),
+
+            thread writer(Writer(last_page_num, out, result_character_frequency), std::ref(ready_for_write_data_priority_queue), std::ref(mutex_ready_for_write_data_priority_queue),
                     std::ref(writing_done), std::ref(mutex_writing_done));
 
             r.join();
@@ -141,66 +151,12 @@ int main(int argc, char** argv) {
             w2.join();
             w3.join();
             w4.join();
+            w5.join();
+            w6.join();
+            w7.join();
+            w8.join();
             writer.join();
         }
-
-        /**/
-        //        thread w5(Compressor(), std::ref(raw_pages_queue), std::ref(mutex_reading_queue), std::ref(reading_done), std::ref(mutex_reading_done),
-        //                std::ref(ready_for_write_data_priority_queue), std::ref(mutex_ready_for_write_data_priority_queue));
-        //        w5.detach();
-        //        thread w6(Compressor(), std::ref(raw_pages_queue), std::ref(mutex_reading_queue), std::ref(reading_done), std::ref(mutex_reading_done),
-        //                std::ref(ready_for_write_data_priority_queue), std::ref(mutex_ready_for_write_data_priority_queue));
-        //        w6.detach();
-        //        thread w7(Compressor(), std::ref(raw_pages_queue), std::ref(mutex_reading_queue), std::ref(reading_done), std::ref(mutex_reading_done),
-        //                std::ref(ready_for_write_data_priority_queue), std::ref(mutex_ready_for_write_data_priority_queue));
-        //        w7.detach();
-        //        thread w8(Compressor(), std::ref(raw_pages_queue), std::ref(mutex_reading_queue), std::ref(reading_done), std::ref(mutex_reading_done),
-        //                std::ref(ready_for_write_data_priority_queue), std::ref(mutex_ready_for_write_data_priority_queue));
-        //        w8.detach();
-        /**/
-
-
-        //thread writer(Writer(std::ref(ready_for_write_data_priority_queue), std::ref(mutex_ready_for_write_data_priority_queue)));
-        //writer.detach();
-        //thread writer(Writer(), std::ref(ready_for_write_data_priority_queue), std::ref(mutex_ready_for_write_data_priority_queue));
-        // writer.detach();
-
-        //        do {
-        //            bool can_read = true;
-        //
-        //            mutex_reading_queue.lock();
-        //            if ( raw_pages_queue.size() > 40 ) {
-        //                can_read = false;
-        //            }
-        //            mutex_reading_queue.unlock();
-        //
-        //            if ( can_read == true ) {
-        //                uint8_t* buffer = new uint8_t[RawPage::MAX_RAW_PAGE_SIZE];
-        //                in.read((char*) buffer, RawPage::MAX_RAW_PAGE_SIZE);
-        //                ++reading_counter;
-        //
-        //                actual_read_bytes = in.gcount();
-        //                spRawPage sp_raw_page(new RawPage(buffer, actual_read_bytes, reading_counter));
-        //
-        //                mutex_reading_queue.lock();
-        //                std::cout << "READING COUNTER == " << reading_counter <<
-        //                        " READING QUEUE SIZE == " << raw_pages_queue.size() << std::endl;
-        //                raw_pages_queue.push(sp_raw_page);
-        //                mutex_reading_queue.unlock();
-        //            }
-        //            //out.write((char*) sp_raw_page->buffer(), sp_raw_page->size());
-        //
-        //
-        //        } while (in.good());
-        //
-        //        if ( in.bad() ) {
-        //            std::cout << "I/O error while reading\n";
-        //            return 1;
-        //        } else if ( in.eof() ) {
-        //            std::cout << "End of file reached successfully\n";
-        //            std::lock_guard<std::mutex> lock(mutex_reading_done);
-        //            reading_done = true;
-        //        }
 
         std::cin.get();
         std::cout << "Main is exiting\n";

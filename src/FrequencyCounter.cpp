@@ -77,6 +77,7 @@ namespace LobKo {
 
                 std::array<uint32_t, 256>& character_frequency = sp_array_->character_frequency_;
                 for (; p_raw_page_buffer != p_raw_page_buffer_end; ++p_raw_page_buffer ) {
+
                     ++(character_frequency[*p_raw_page_buffer]);
                 }
             }

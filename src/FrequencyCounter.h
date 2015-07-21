@@ -22,9 +22,9 @@ namespace LobKo {
 
     class FrequencyCounter {
     public:
-        FrequencyCounter(std::array< uint32_t, 256>& result_character_frequency, std::mutex& mutex_result_character_frequency);
+        FrequencyCounter(std::array<uint32_t, 256>& result_character_frequency, std::mutex& mutex_result_character_frequency);
         virtual ~FrequencyCounter();
-        
+
         void operator()(std::queue<spRawPage>& raw_pages_queue, std::mutex& mutex_reading_queue, bool& reading_done, std::mutex& mutex_reading_done);
     private:
         //        FrequencyCounter(const FrequencyCounter& orig);

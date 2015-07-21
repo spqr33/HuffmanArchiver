@@ -28,7 +28,7 @@ namespace LobKo {
         inline uint64_t reading_counter() const;
         void operator()(std::queue<spRawPage>& raw_pages_queue, std::mutex& mutex_reading_queue, bool& reading_done, std::mutex& mutex_reading_done, uint64_t& last_page_num) const;
         inline uint64_t get_file_size() const;
-    private:
+    //private:
         std::ifstream& file_in_;
         mutable uint64_t reading_counter_;
         uint64_t file_size_;
