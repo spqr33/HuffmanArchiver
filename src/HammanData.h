@@ -33,6 +33,8 @@ namespace LobKo {
         void build_character_frequency_array(uint8_t * buffer, const uint32_t size);
         spBitBunch generate_bit_bunch(RawPage& inputPage) const;
     private:
+        void build();
+        
         std::array<uint32_t, 256> character_frequency_;
         std::array<spHammanTreeNode, 256> character_to_node_map_;
 
