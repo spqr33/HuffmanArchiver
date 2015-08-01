@@ -35,6 +35,19 @@ namespace LobKo {
         current_byte_ = buffer_;
     };
 
+    BitBunch::BitBunch(uint8_t* buffer, uint32_t buffer_size) :
+    usage_count_(1),
+    current_bit_(BITS_PER_BYTE - 1),
+    size_(0) {
+        if ( (buffer_size * BITS_PER_BYTE) > max_bit_can_hold() ) {
+            throw std::out_of_range("BitBunch(), More than the limit bits requested");
+        }
+        
+        allocated_bytes_ = buffer_size;
+        buffer_ = buffer;
+        current_byte_ = buffer_;
+    }
+
     BitBunch::~BitBunch() {
         buff_free_memory();
     };

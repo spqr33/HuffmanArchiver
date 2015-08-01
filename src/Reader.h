@@ -13,6 +13,7 @@
 #include <mutex>
 #include <memory>
 #include "RawPage.h"
+#include <iostream>
 
 namespace LobKo {
     class RawPage;
@@ -28,10 +29,15 @@ namespace LobKo {
         inline uint64_t reading_counter() const;
         void operator()(std::queue<spRawPage>& raw_pages_queue, std::mutex& mutex_reading_queue, bool& reading_done, std::mutex& mutex_reading_done, uint64_t& last_page_num) const;
         inline uint64_t get_file_size() const;
-    //private:
+
+
+    protected:
         std::ifstream& file_in_;
         mutable uint64_t reading_counter_;
         uint64_t file_size_;
+//    public:
+//
+//        Reader(const Reader& orig);
     };
 
     uint64_t Reader::get_file_size() const {
@@ -41,8 +47,8 @@ namespace LobKo {
     void Reader::reset_seek() {
         file_in_.seekg(0, file_in_.beg);
     }
-    
-    uint64_t Reader::reading_counter() const{
+
+    uint64_t Reader::reading_counter() const {
         return reading_counter_;
     }
 }

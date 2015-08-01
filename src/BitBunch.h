@@ -29,6 +29,7 @@ namespace LobKo {
          * @param bitsQuantity
          */
         explicit BitBunch(uint32_t bitsQuantity = 32);
+        BitBunch(uint8_t* buffer, uint32_t buffer_size);
         BitBunch(const BitBunch& orig);
 
         ~BitBunch();
@@ -47,22 +48,24 @@ namespace LobKo {
         enum add_behavior {
             NONE, ADD_ZERO, ADD_ONE
         };
-    protected:
-
+        
         enum fill_behavior {
             FILL_ZERO, DONT_FILL_ZERO
         };
-        /**
-         * can throw std::out_of_range("More than the limit bits requested");
-         */
         uint8_t* buff_allocate(const uint32_t size_in_bytes, fill_behavior fill = FILL_ZERO);
-        void buff_free_memory();
-        void buff_copy(uint8_t* dest, uint32_t dest_size) const;
-
         enum bit_state {
             ZERO, ONE
         };
         bit_state operator[](uint32_t position) const;
+        static const uint32_t MAX_BYTES_COUNT;
+    protected:
+
+        /**
+         * can throw std::out_of_range("More than the limit bits requested");
+         */
+        void buff_free_memory();
+        void buff_copy(uint8_t* dest, uint32_t dest_size) const;
+
         //inline void set_bit();
 
         uint32_t usage_count_;
@@ -73,7 +76,7 @@ namespace LobKo {
         uint8_t* current_byte_;
         uint8_t current_bit_;
         uint32_t allocated_bytes_;
-        static const uint32_t MAX_BYTES_COUNT;
+        
         static const uint8_t BITS_PER_BYTE = 8;
         static const int BUFFER_GROW_FACTOR = 2;
     private:

@@ -13,7 +13,8 @@
 namespace LobKo {
 
     HammanData::HammanData(RawPage& inputPage) :
-    priority_q_(hamman_tree_node_copmarision), character_frequency_({0}) {
+    priority_q_(hamman_tree_node_copmarision),
+    character_frequency_({0}) {
         build_character_frequency_array(inputPage.buffer(), inputPage.size());
         build();
         hamman_tree_root_.reset();
@@ -26,6 +27,14 @@ namespace LobKo {
         hamman_tree_root_.reset();
     }
 
+    HammanData::HammanData(std::pair<uint8_t*, size_t > p) :
+    priority_q_(hamman_tree_node_copmarision),
+    character_frequency_({0}) {
+        build_character_frequency_array(p.first, p.second);
+        build();
+        delete [] p.first;
+    }
+
     HammanData::~HammanData() {
     }
 
@@ -34,6 +43,12 @@ namespace LobKo {
 
         for ( uint32_t i = 0; i < size; ++i ) {
             ++character_frequency_[ buffer[i] ];
+        }
+
+        for ( uint32_t i = 0; i < 256; ++i ) {
+            if ( character_frequency_[i] != 0 ) {
+                std::cout << "character_frequency[" << i << "]" << character_frequency_[i] << '\n';
+            }
         }
     };
 
@@ -76,7 +91,7 @@ namespace LobKo {
         //#endif
 
 
-        spBitBunch sp_bit_bunch(new BitBunch);
+        spBitBunch sp_bit_bunch(new BitBunch());
         BitBunch& bit_bunch = *(sp_bit_bunch.get());
 
         uint8_t* buffer = inputPage.buffer();
@@ -84,6 +99,7 @@ namespace LobKo {
 
         for (; buffer != buffer_end; ++buffer ) {
             BitBunch& bits_correspond_to_sybmol = *(character_to_node_map_[*buffer]->bits_sequence.get());
+
             bit_bunch += bits_correspond_to_sybmol;
         }
         return sp_bit_bunch;
@@ -92,7 +108,9 @@ namespace LobKo {
     void HammanData::build() {
         for ( uint32_t character = 0; character < 256; ++character ) {
             if ( character_frequency_[character] != 0 ) {
-                character_to_node_map_[character] = HammanTreeNode::get_node(character_frequency_[character]);
+                character_to_node_map_[character] =
+                        HammanTreeNode::get_node(character_frequency_[character],
+                        static_cast<uint8_t> (character));
 #ifndef NDEBUG
                 character_to_node_map_[character]->characters = character;
 #endif
@@ -123,5 +141,9 @@ namespace LobKo {
             priority_q_.pop();
             calc_bit_bunch(hamman_tree_root_, spBitBunch(new BitBunch()), BitBunch::NONE);
         }
+    }
+
+    spHammanTreeNode HammanData::get_hamman_tree_root() const {
+        return hamman_tree_root_;
     }
 }

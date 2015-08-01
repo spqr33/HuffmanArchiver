@@ -8,6 +8,7 @@
 #include "Reader.h"
 #include <cstdlib> //exit()
 #include <iostream>
+#include <cassert>
 
 namespace LobKo {
 
@@ -22,9 +23,22 @@ namespace LobKo {
     Reader::~Reader() {
     }
 
+//    Reader::Reader(const Reader& orig) :
+//    file_in_(orig.file_in_) {
+//        std::cout << "-=-=-=-=-=-= Copying =-=-=-=-=-=-=-=-=\n";
+//        std::cout << "-=-=-=-=-=-= Copying" << file_in_.tellg() << std::endl;
+//        file_size_ = orig.file_size_;
+//        reading_counter_ = orig.reading_counter_;
+//        //file_in_.seekg(0, file_in_.beg);
+//        std::cout << "-=-=-=-=-=-= Copying" << file_in_.tellg() << std::endl;
+//
+//    }
+
     void Reader::operator()(std::queue<spRawPage>& raw_pages_queue, std::mutex& mutex_reading_queue, bool& reading_done, std::mutex& mutex_reading_done, uint64_t& last_page_num) const {
         uint32_t actual_read_bytes;
         bool can_read = true;
+        assert(file_in_.good() && "Reader::operator(), file_in_.good()");
+        //file_in_.seekg(0, file_in_.beg);
 
         do {
             can_read = true;
@@ -41,13 +55,15 @@ namespace LobKo {
                 ++reading_counter_;
 
                 actual_read_bytes = file_in_.gcount();
+
                 spRawPage sp_raw_page(new RawPage(buffer, actual_read_bytes, reading_counter_));
 
                 mutex_reading_queue.lock();
                 raw_pages_queue.push(sp_raw_page);
                 //#ifndef NDEBUG
                 std::cout << "READING COUNTER == " << reading_counter_ <<
-                        " READING QUEUE SIZE == " << raw_pages_queue.size() << std::endl;
+                        " READING QUEUE SIZE == " << raw_pages_queue.size() <<
+                        "actual_read_bytes == " << actual_read_bytes << std::endl;
                 //#endif
                 mutex_reading_queue.unlock();
             }

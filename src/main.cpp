@@ -112,29 +112,27 @@ int main(int argc, char** argv) {
         mutex mutex_writing_done;
 
         {
-            //std::cout << "reader.reading_counter_ " << reader.reading_counter_ << std::endl;
-            //std::cin.get();
-            
+            in.clear(); // in.failbit was set on last reading.
             reader.reset_reading_counter();
             reader.reset_seek();
+            std::cout << "-=-=-=-=-=-= Main, reset seek" << in.tellg() << std::endl;
             reading_done = false;
-            in.clear(); // in.failbit was set on last reading.
 
-            Reader reader2(in);
+            //Reader reader2(in);
             thread r(reader, std::ref(raw_pages_queue), std::ref(mutex_reading_queue), std::ref(reading_done), std::ref(mutex_reading_done), std::ref(last_page_num));
 
             std::function<void(queue<spRawPage>&, mutex&, bool&, mutex&, CompressedDataPriorityQueue&, mutex&, bool&, mutex&) > worker = Compressor(sp_hamman_data);
             thread w1(worker, std::ref(raw_pages_queue), std::ref(mutex_reading_queue), std::ref(reading_done), std::ref(mutex_reading_done),
                     std::ref(ready_for_write_data_priority_queue), std::ref(mutex_ready_for_write_data_priority_queue), std::ref(writing_done), std::ref(mutex_writing_done));
 
-            thread w2(Compressor(sp_hamman_data), std::ref(raw_pages_queue), std::ref(mutex_reading_queue), std::ref(reading_done), std::ref(mutex_reading_done),
-                    std::ref(ready_for_write_data_priority_queue), std::ref(mutex_ready_for_write_data_priority_queue), std::ref(writing_done), std::ref(mutex_writing_done));
-            thread w3(Compressor(sp_hamman_data), std::ref(raw_pages_queue), std::ref(mutex_reading_queue), std::ref(reading_done), std::ref(mutex_reading_done),
-                    std::ref(ready_for_write_data_priority_queue), std::ref(mutex_ready_for_write_data_priority_queue), std::ref(writing_done), std::ref(mutex_writing_done));
-            thread w4(Compressor(sp_hamman_data), std::ref(raw_pages_queue), std::ref(mutex_reading_queue), std::ref(reading_done), std::ref(mutex_reading_done),
-                    std::ref(ready_for_write_data_priority_queue), std::ref(mutex_ready_for_write_data_priority_queue), std::ref(writing_done), std::ref(mutex_writing_done));
-            thread w5(Compressor(sp_hamman_data), std::ref(raw_pages_queue), std::ref(mutex_reading_queue), std::ref(reading_done), std::ref(mutex_reading_done),
-                    std::ref(ready_for_write_data_priority_queue), std::ref(mutex_ready_for_write_data_priority_queue), std::ref(writing_done), std::ref(mutex_writing_done));
+            thread w2{Compressor(sp_hamman_data), std::ref(raw_pages_queue), std::ref(mutex_reading_queue), std::ref(reading_done), std::ref(mutex_reading_done),
+                std::ref(ready_for_write_data_priority_queue), std::ref(mutex_ready_for_write_data_priority_queue), std::ref(writing_done), std::ref(mutex_writing_done)};
+            thread w3{Compressor(sp_hamman_data), std::ref(raw_pages_queue), std::ref(mutex_reading_queue), std::ref(reading_done), std::ref(mutex_reading_done),
+                std::ref(ready_for_write_data_priority_queue), std::ref(mutex_ready_for_write_data_priority_queue), std::ref(writing_done), std::ref(mutex_writing_done)};
+            thread w4{Compressor(sp_hamman_data), std::ref(raw_pages_queue), std::ref(mutex_reading_queue), std::ref(reading_done), std::ref(mutex_reading_done),
+                std::ref(ready_for_write_data_priority_queue), std::ref(mutex_ready_for_write_data_priority_queue), std::ref(writing_done), std::ref(mutex_writing_done)};
+            thread w5{Compressor(sp_hamman_data), std::ref(raw_pages_queue), std::ref(mutex_reading_queue), std::ref(reading_done), std::ref(mutex_reading_done),
+                std::ref(ready_for_write_data_priority_queue), std::ref(mutex_ready_for_write_data_priority_queue), std::ref(writing_done), std::ref(mutex_writing_done)};
             thread w6(Compressor(sp_hamman_data), std::ref(raw_pages_queue), std::ref(mutex_reading_queue), std::ref(reading_done), std::ref(mutex_reading_done),
                     std::ref(ready_for_write_data_priority_queue), std::ref(mutex_ready_for_write_data_priority_queue), std::ref(writing_done), std::ref(mutex_writing_done));
             thread w7(Compressor(sp_hamman_data), std::ref(raw_pages_queue), std::ref(mutex_reading_queue), std::ref(reading_done), std::ref(mutex_reading_done),

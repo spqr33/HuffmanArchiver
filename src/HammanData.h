@@ -15,6 +15,7 @@
 #include <queue>
 #include <vector>
 #include <memory>
+#include <utility>
 
 namespace LobKo {
     class RawPage;
@@ -29,9 +30,11 @@ namespace LobKo {
     public:
         explicit HammanData(RawPage& inputPage);
         explicit HammanData(const std::array<uint32_t, 256>& character_frequency);
+        explicit HammanData(std::pair<uint8_t*, size_t> p);
         virtual ~HammanData();
         void build_character_frequency_array(uint8_t * buffer, const uint32_t size);
         spBitBunch generate_bit_bunch(RawPage& inputPage) const;
+        spHammanTreeNode get_hamman_tree_root() const;
     private:
         void build();
         

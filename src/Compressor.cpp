@@ -38,7 +38,7 @@ namespace LobKo {
                 if ( reading_done == true ) {
                     mutex_reading_queue.unlock();
                     mutex_reading_done.unlock();
-                    std::cout<< "Compressor is exiting\n";
+                    std::cout << "Compressor is exiting\n";
                     break;
                 }
 
@@ -61,8 +61,11 @@ namespace LobKo {
                 spCompressedData sp_compressed_page(new CompressedData(sp_raw_page->page_number()));
                 //sp_compressed_page->set_hamman_data(sp_hamman_data_);
                 sp_compressed_page->set_bytes_compressed(sp_raw_page->size());
-
                 spBitBunch sp_bit_bunch = sp_hamman_data_->generate_bit_bunch(*(sp_raw_page.get()));
+#ifndef NDEBUG
+                std::cout << "Thread " << std::this_thread::get_id() <<
+                        std::cout << "BitBunch size: " << sp_bit_bunch->get_size_in_bytes() << std::endl;
+#endif
                 sp_compressed_page->set_bit_bunch(sp_bit_bunch);
 
 #ifndef NDEBUG
