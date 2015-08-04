@@ -9,7 +9,8 @@
 namespace LobKo {
 
     HammanTreeNode::HammanTreeNode(uint32_t frequency) :
-    frequency_(frequency) {
+    frequency_(frequency),
+    is_leaf_(false) {
 #ifndef NDEBUG
         characters = "AUX";
 #endif
@@ -24,13 +25,14 @@ namespace LobKo {
     spHammanTreeNode HammanTreeNode::get_node(uint32_t frequency) {
         return spHammanTreeNode(new HammanTreeNode(frequency));
     };
+
     spHammanTreeNode HammanTreeNode::get_node(uint32_t frequency, uint8_t symbol) {
         spHammanTreeNode s(new HammanTreeNode(frequency));
         s->set_character(symbol);
-        
+
         return s;
     };
-    
+
     spHammanTreeNode HammanTreeNode::get_node(uint32_t frequency, spHammanTreeNode left, spHammanTreeNode right) {
         spHammanTreeNode sp(new HammanTreeNode(frequency));
         sp->set_left_son(left);

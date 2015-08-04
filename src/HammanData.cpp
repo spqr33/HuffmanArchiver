@@ -32,24 +32,34 @@ namespace LobKo {
     character_frequency_({0}) {
         build_character_frequency_array(p.first, p.second);
         build();
-        delete [] p.first;
+        //delete [] p.first;
     }
 
     HammanData::~HammanData() {
     }
 
-    void HammanData::build_character_frequency_array(uint8_t * buffer, const uint32_t size) {
+    void HammanData::build_character_frequency_array( uint8_t * buffer, const uint32_t size) {
         assert(buffer && "BUFFER is zero pointer");
 
-        for ( uint32_t i = 0; i < size; ++i ) {
-            ++character_frequency_[ buffer[i] ];
+        typedef uint8_t character;
+        typedef uint32_t frequency;
+        
+        //character* pch = buffer;
+        //frequency* pfr = buffer+sizeof(character);
+        for ( uint32_t i = 0; i < size; ) {
+            character ch = buffer[i];
+
+            i += sizeof (character);
+            frequency* p = reinterpret_cast<frequency*>(buffer+i);
+            character_frequency_[ch] = *p;
+            i += sizeof (frequency);
         }
 
-        for ( uint32_t i = 0; i < 256; ++i ) {
-            if ( character_frequency_[i] != 0 ) {
-                std::cout << "character_frequency[" << i << "]" << character_frequency_[i] << '\n';
-            }
-        }
+//        for ( uint32_t i = 0; i < 256; ++i ) {
+//            if ( character_frequency_[i] != 0 ) {
+//                std::cout << "character_frequency[" << i << "]" << character_frequency_[i] << '\n';
+//            }
+//        }
     };
 
     void HammanData::calc_bit_bunch(spHammanTreeNode node, const spBitBunch bits_sequence, BitBunch::add_behavior behavior) {
@@ -111,6 +121,7 @@ namespace LobKo {
                 character_to_node_map_[character] =
                         HammanTreeNode::get_node(character_frequency_[character],
                         static_cast<uint8_t> (character));
+                character_to_node_map_[character]->set_leaf(true);
 #ifndef NDEBUG
                 character_to_node_map_[character]->characters = character;
 #endif

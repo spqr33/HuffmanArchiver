@@ -35,6 +35,8 @@ namespace LobKo {
         inline spHammanTreeNode get_right_son() const;
         inline uint8_t get_character() const;
         inline void set_character(uint8_t new_character);
+        inline bool is_leaf() const;
+        inline void set_leaf(bool n);
 #ifndef NDEBUG        
         std::string characters;
 #endif
@@ -44,6 +46,7 @@ namespace LobKo {
         spHammanTreeNode right_;
         spBitBunch bits_sequence;
         uint8_t character_;
+        bool is_leaf_;
 
         const HammanTreeNode& operator=(const HammanTreeNode& rhs);
         HammanTreeNode(const HammanTreeNode& orig);
@@ -75,6 +78,13 @@ namespace LobKo {
 
     void HammanTreeNode::set_character(uint8_t new_character) {
         character_ = new_character;
+    }
+
+    inline bool HammanTreeNode::is_leaf() const {
+        return is_leaf_;
+    };
+    void HammanTreeNode::set_leaf(bool n) {
+        is_leaf_ = n;
     }
 
 }

@@ -37,7 +37,7 @@ namespace LobKo {
         spHammanTreeNode get_hamman_tree_root() const;
     private:
         void build();
-        
+
         std::array<uint32_t, 256> character_frequency_;
         std::array<spHammanTreeNode, 256> character_to_node_map_;
 

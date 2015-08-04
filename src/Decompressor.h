@@ -14,13 +14,17 @@
 #include "Decompression.h"
 
 namespace LobKo {
-
+    class HammanData;
+    typedef std::shared_ptr<HammanData> spHammanData;
+    
     class Decompressor {
     public:
-        Decompressor();
+        Decompressor(Decompression& decompression);
         virtual ~Decompressor();
         
          void operator()(Decompression& decompression);
+         spHammanData sp_hamman_data_;
+         
     private:
 
     };

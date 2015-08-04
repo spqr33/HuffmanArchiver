@@ -42,10 +42,13 @@ namespace LobKo {
             std::shared_ptr<Writer::Buff> sp_buff = serialization_frequency_arr_to_buffer();
             uint16_t size = sp_buff->water_mark_ - sp_buff->start_;
 
+            std::cout << "Buffer size: " << size << std::endl; 
+            
             assert(size > 0 && "void Writer::operator(): sp_buff->water_mark_ - sp_buff->start_");
             assert(file_out_.good()&& "void Writer::operator() file_out_.good()");
             file_out_.write(reinterpret_cast<const char*> (&size), sizeof (size));
             file_out_.write(reinterpret_cast<const char*> (sp_buff->start_), size);
+            file_out_.write(reinterpret_cast<char*>(&last_page_num_),sizeof(last_page_num_));
         }
         uint64_t compressed_size = 0;
         while (true) {

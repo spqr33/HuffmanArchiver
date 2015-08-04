@@ -10,6 +10,7 @@
 #include <cstddef>
 #include <stdexcept>
 #include <bitset>
+#include <sstream>
 
 const uint32_t LobKo::BitBunch::MAX_BYTES_COUNT = 1024 * 1024 * 8;
 //const uint16_t LobKo::BitBunch::MAX_BYTES_COUNT = std::numeric_limits<uint16_t>::max();
@@ -21,7 +22,9 @@ namespace LobKo {
     current_bit_(BITS_PER_BYTE - 1),
     size_(0) {
         if ( bitsQuantity > max_bit_can_hold() ) {
-            throw std::out_of_range("BitBunch(), More than the limit bits requested");
+            std::stringstream s;
+            s << "BitBunch(), More than the limit bits requested, bitsQuantity: " << bitsQuantity;
+            throw std::out_of_range(s.str());
         }
 
         // TODO if bitsQuantity == 0 ????
@@ -42,7 +45,7 @@ namespace LobKo {
         if ( (buffer_size * BITS_PER_BYTE) > max_bit_can_hold() ) {
             throw std::out_of_range("BitBunch(), More than the limit bits requested");
         }
-        
+
         allocated_bytes_ = buffer_size;
         buffer_ = buffer;
         current_byte_ = buffer_;
@@ -170,6 +173,7 @@ namespace LobKo {
         uint8_t target_byte = *(buffer_ + position / BITS_PER_BYTE);
         uint32_t target_bit = position % BITS_PER_BYTE;
 
+        //bool res = ;
         if ( (((uint8_t) 1) << (BITS_PER_BYTE - 1 - target_bit)) & (target_byte) ) {
             return ONE;
         } else {
@@ -177,6 +181,7 @@ namespace LobKo {
         }
 
     }
+
 
 }
 

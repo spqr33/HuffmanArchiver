@@ -12,8 +12,9 @@ namespace LobKo {
     Decompression::Decompression() :
     reading_done_(false),
     writing_done_(false),
-    ready_for_write_data_priority_q_(LobKo::comparision_page_number) 
-    {
+    ready_for_write_data_priority_q_(LobKo::comparision_page_number),
+    last_page_num_calculated_(false),
+    header_calculated_(false){
         ;
     }
 
