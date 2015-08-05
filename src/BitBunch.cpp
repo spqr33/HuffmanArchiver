@@ -168,21 +168,6 @@ namespace LobKo {
             }
         }
     }
-
-    BitBunch::bit_state BitBunch::operator[](uint32_t position) const {
-        uint8_t target_byte = *(buffer_ + position / BITS_PER_BYTE);
-        uint32_t target_bit = position % BITS_PER_BYTE;
-
-        //bool res = ;
-        if ( (((uint8_t) 1) << (BITS_PER_BYTE - 1 - target_bit)) & (target_byte) ) {
-            return ONE;
-        } else {
-            return ZERO;
-        }
-
-    }
-
-
 }
 
 

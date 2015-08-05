@@ -57,7 +57,7 @@ namespace LobKo {
         enum bit_state {
             ZERO, ONE
         };
-        bit_state operator[](uint32_t position) const;
+        inline bit_state operator[](uint32_t position) const;
         static const uint32_t MAX_BYTES_COUNT;
         static const uint8_t BITS_PER_BYTE = 8;
     protected:
@@ -177,18 +177,18 @@ namespace LobKo {
     }
 
 
-//    BitBunch::bit_state BitBunch::operator[](uint32_t position) const {
-//        uint8_t target_byte = *(buffer_ + position / BITS_PER_BYTE);
-//        uint32_t target_bit = position % BITS_PER_BYTE;
-//
-//        //bool res = ;
-//        if ((((uint8_t) 1) << (BITS_PER_BYTE - 1 - target_bit)) & (target_byte)) {
-//            return ONE;
-//        } else {
-//            return ZERO;
-//        }
-//
-//    }
+    BitBunch::bit_state BitBunch::operator[](uint32_t position) const {
+        uint8_t target_byte = *(buffer_ + position / BITS_PER_BYTE);
+        uint32_t target_bit = position % BITS_PER_BYTE;
+
+        //bool res = ;
+        if ((((uint8_t) 1) << (BITS_PER_BYTE - 1 - target_bit)) & (target_byte)) {
+            return ONE;
+        } else {
+            return ZERO;
+        }
+
+    }
 };
 #endif	/* BITBUNCH_H */
 
