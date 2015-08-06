@@ -14,6 +14,7 @@
 #include <string>
 #include <cassert>
 
+
 namespace LobKo {
     class HammanTreeNode;
     class HammanData;
@@ -21,6 +22,7 @@ namespace LobKo {
 
     class HammanTreeNode {
         friend class HammanData;
+        friend struct HammanTreeNodeCopmarision;
     public:
         explicit HammanTreeNode(uint32_t frequency);
         virtual ~HammanTreeNode();
@@ -37,9 +39,9 @@ namespace LobKo {
         inline void set_character(uint8_t new_character);
         inline bool is_leaf() const;
         inline void set_leaf(bool n);
-#ifndef NDEBUG        
-        std::string characters;
-#endif
+//#ifndef NDEBUG        
+        std::string characters_;
+//#endif
     private:
         uint32_t frequency_;
         spHammanTreeNode left_;
@@ -80,7 +82,7 @@ namespace LobKo {
         character_ = new_character;
     }
 
-    inline bool HammanTreeNode::is_leaf() const {
+    bool HammanTreeNode::is_leaf() const {
         return is_leaf_;
     };
     void HammanTreeNode::set_leaf(bool n) {

@@ -141,7 +141,7 @@ namespace LobKo {
                 throw std::out_of_range("operator+=(),More than the limit bits requested");
             }
             uint8_t* new_buffer;
-
+            uint8_t* old_current_byte = current_byte_;
             // TODO change  FILL_ZERO to DONT_FILL_ZERO and check behavior
             uint32_t need_bytes = (size_ + rhs.size_) / BITS_PER_BYTE;
             if ( (size_ + rhs.size_) % BITS_PER_BYTE != 0 ) {
@@ -153,12 +153,13 @@ namespace LobKo {
             }
             new_buffer = buff_allocate(need_bytes, FILL_ZERO);
             buff_copy(new_buffer, need_bytes);
+
+            current_byte_ = new_buffer + (old_current_byte - buffer_);
             buff_free_memory();
             buffer_ = new_buffer;
 
-            current_byte_ = new_buffer + allocated_bytes_;
-
             allocated_bytes_ = need_bytes;
+            //current_bit_ --- left the same.
         };
         for ( uint32_t i = 0; i < rhs.size_; ++i ) {
             if ( rhs[i] == ONE ) {

@@ -38,33 +38,33 @@ namespace LobKo {
     HammanData::~HammanData() {
     }
 
-    void HammanData::build_character_frequency_array( uint8_t * buffer, const uint32_t size) {
+    void HammanData::build_character_frequency_array(uint8_t * buffer, const uint32_t size) {
         assert(buffer && "BUFFER is zero pointer");
 
         typedef uint8_t character;
         typedef uint32_t frequency;
-        
+
         //character* pch = buffer;
         //frequency* pfr = buffer+sizeof(character);
         for ( uint32_t i = 0; i < size; ) {
             character ch = buffer[i];
 
             i += sizeof (character);
-            frequency* p = reinterpret_cast<frequency*>(buffer+i);
+            frequency* p = reinterpret_cast<frequency*> (buffer + i);
             character_frequency_[ch] = *p;
             i += sizeof (frequency);
         }
 
-//        for ( uint32_t i = 0; i < 256; ++i ) {
-//            if ( character_frequency_[i] != 0 ) {
-//                std::cout << "character_frequency[" << i << "]" << character_frequency_[i] << '\n';
-//            }
-//        }
+        //        for ( uint32_t i = 0; i < 256; ++i ) {
+        //            if ( character_frequency_[i] != 0 ) {
+        //                std::cout << "character_frequency[" << i << "]" << character_frequency_[i] << '\n';
+        //            }
+        //        }
     };
 
     void HammanData::calc_bit_bunch(spHammanTreeNode node, const spBitBunch bits_sequence, BitBunch::add_behavior behavior) {
 #ifndef NDEBUG
-        std::cout << "Char: " << node->characters << "  ";
+        std::cout << "Char: " << node->characters_ << "  ";
 #endif
         BitBunch* p = new BitBunch(*(bits_sequence.get()));
         node->bits_sequence = spBitBunch(p);
@@ -89,10 +89,15 @@ namespace LobKo {
     }
 
     bool hamman_tree_node_copmarision(spHammanTreeNode a, spHammanTreeNode b) {
-        if ( a->frequency() >= b->frequency() ) {
+        if ( a->frequency() > b->frequency() ) {
             return true;
+        } else if ( a->frequency() < b->frequency() ) {
+            return false;
+        } else if ( a->characters_ > b->characters_ ) {
+            return true;
+        } else {
+            return false;
         }
-        return false;
     }
 
     spBitBunch HammanData::generate_bit_bunch(RawPage& inputPage) const {
@@ -122,9 +127,9 @@ namespace LobKo {
                         HammanTreeNode::get_node(character_frequency_[character],
                         static_cast<uint8_t> (character));
                 character_to_node_map_[character]->set_leaf(true);
-#ifndef NDEBUG
-                character_to_node_map_[character]->characters = character;
-#endif
+                //#ifndef NDEBUG
+                character_to_node_map_[character]->characters_ = character;
+                //#endif
                 priority_q_.push(character_to_node_map_[character]);
             }
         }
@@ -138,10 +143,10 @@ namespace LobKo {
             priority_q_.pop();
             spHammanTreeNode node = HammanTreeNode::get_node(p1->frequency() + p2->frequency(), p1, p2);
 #ifndef NDEBUG
-            std::cout << "First popped char: " << p1->characters << "\n";
-            std::cout << "Second popped char: " << p2->characters << "\n";
-            node->characters = "(" + p1->characters + " " + p2->characters + ")";
+            std::cout << "First popped char: " << p1->characters_ << "\n";
+            std::cout << "Second popped char: " << p2->characters_ << "\n";
 #endif
+            node->characters_ = "(" + p1->characters_ + p2->characters_ + ")";
             priority_q_.push(node);
         }
 #ifndef NDEBUG        

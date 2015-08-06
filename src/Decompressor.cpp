@@ -31,7 +31,7 @@ namespace LobKo {
         while (true) {
             decompression.mutex_compressed_data_q_.lock();
             if ( decompression.compressed_data_q_.empty() ) {
-                std::cout << "[Decompressor] Thread # " << std::this_thread::get_id() << " Compressed_data_q is empty\n";
+                
                 decompression.mutex_reading_done_.lock();
                 if ( decompression.reading_done_ == true ) {
                     decompression.mutex_compressed_data_q_.unlock();

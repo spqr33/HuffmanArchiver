@@ -11,9 +11,9 @@ namespace LobKo {
     HammanTreeNode::HammanTreeNode(uint32_t frequency) :
     frequency_(frequency),
     is_leaf_(false) {
-#ifndef NDEBUG
-        characters = "AUX";
-#endif
+//#ifndef NDEBUG
+//        characters = "AUX";
+//#endif
     }
 
     HammanTreeNode::~HammanTreeNode() {

@@ -19,6 +19,7 @@
 #include <mutex>
 #include <thread>
 #include <condition_variable>
+#include <vector>
 
 
 using std::string;
@@ -34,6 +35,7 @@ using std::mutex;
 using std::thread;
 using std::lock_guard;
 using std::unique_lock;
+using std::vector;
 
 /*
  * 
@@ -80,15 +82,24 @@ int main(int argc, char** argv) {
     // thread r(reader, std::ref(compressed_data_q), std::ref(mutex_compressed_data_q), std::ref(reading_done), std::ref(mutex_reading_done));
     thread r(reader, std::ref(decompression));
 
+    vector<thread> decompressors;
+    uint32_t physical_core_quantity = thread::hardware_concurrency();
+    if ( physical_core_quantity == 0 ) {
+        const uint32_t DEFAULT_CORE_QUANTITY = 4;
+        physical_core_quantity = DEFAULT_CORE_QUANTITY;
+    }
 
-    thread dc1(Decompressor(decompression), std::ref(decompression));
-//    thread dc2(Decompressor(decompression), std::ref(decompression));
-//    thread dc3(Decompressor(decompression), std::ref(decompression));
-//    thread dc4(Decompressor(decompression), std::ref(decompression));
-//    thread dc5(Decompressor(decompression), std::ref(decompression));
-//    thread dc6(Decompressor(decompression), std::ref(decompression));
-//    thread dc7(Decompressor(decompression), std::ref(decompression));
-//    thread dc8(Decompressor(decompression), std::ref(decompression));
+    for ( uint32_t i = 0; i < physical_core_quantity * 4; ++i ) {
+        decompressors.push_back(thread(Decompressor(decompression), std::ref(decompression)));
+    }
+    //    thread dc1(Decompressor(decompression), std::ref(decompression));
+    //    thread dc2(Decompressor(decompression), std::ref(decompression));
+    //    thread dc3(Decompressor(decompression), std::ref(decompression));
+    //    thread dc4(Decompressor(decompression), std::ref(decompression));
+    //    thread dc5(Decompressor(decompression), std::ref(decompression));
+    //    thread dc6(Decompressor(decompression), std::ref(decompression));
+    //    thread dc7(Decompressor(decompression), std::ref(decompression));
+    //    thread dc8(Decompressor(decompression), std::ref(decompression));
     {
         unique_lock<mutex> lk(decompression.mutex_last_page_num_);
         while (!decompression.last_page_num_calculated_) {
@@ -98,14 +109,20 @@ int main(int argc, char** argv) {
     thread w(DecompressedPageWriter(decompression.last_page_num_, decompressed_file), std::ref(decompression));
 
     r.join();
-    dc1.join();
-//    dc2.join();
-//    dc3.join();
-//    dc4.join();
-//    dc5.join();
-//    dc6.join();
-//    dc7.join();
-//    dc8.join();
+    for ( auto& t : decompressors ) {
+        t.join();
+    }
+    //    for ( uint32_t i = 0; i < physical_core_quantity; ++i ) {
+    //        decompressors[i].join();
+    //    }
+    //dc1.join();
+    //    dc2.join();
+    //    dc3.join();
+    //    dc4.join();
+    //    dc5.join();
+    //    dc6.join();
+    //    dc7.join();
+    //    dc8.join();
     w.join();
 
     compressed_file.clear();
